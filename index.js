@@ -9,7 +9,6 @@ app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers','x-test');
-    res.setHeader('Content-Type', 'application/json');
     next();
   });
 
@@ -25,7 +24,7 @@ app.use(express.json())
 app.use(bodyParser.text());
 app.options('*', cors());
 
-app.get('/image', (req, res) => {
+app.get('/makeimage', (req, res) => {
     const canvas = createCanvas(+req.query.width, +req.query.height);
     const ctx = canvas.getContext("2d");
 
