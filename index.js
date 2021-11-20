@@ -43,7 +43,7 @@ app.get('/image', (req, res) => {
     res.send(buffer);
 });
 
-app.post('/login', (req, res) => {
+app.get('/login', (req, res) => {
     res.send('germanleton');
 });
 
