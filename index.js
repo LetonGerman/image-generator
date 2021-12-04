@@ -58,7 +58,7 @@ app.get('/wordpress', async (req, res) => {
         const data = await response.json();
         JWT = data.token;
     }
-    
+
     const wpResponse = await fetch('https://wordpress.kodaktor.ru/wp-json/wp/v2/posts', 
         {
             method: 'POST', 
@@ -70,6 +70,7 @@ app.get('/wordpress', async (req, res) => {
         res.send("Not found :(");
         return;
     }
+    res.set('Content-Type', 'text/plain');
     await res.send(`${wpPostData.id}`);
 });
 
