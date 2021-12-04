@@ -1,9 +1,13 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-const cors = require('cors');
-const { createCanvas } = require("canvas");
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import canvas from 'canvas';
+const { createCanvas } = canvas;
+import fetch from 'node-fetch';
 
+const app = express();
+
+let JWT = null;
 
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin','*');
@@ -40,6 +44,33 @@ app.get('/makeimage', (req, res) => {
     res.set('Content-disposition', 'attachment; filename=image');
     res.set('Content-Type', 'image/png');
     res.send(buffer);
+});
+
+app.get('/wordpress', async (req, res) => {
+
+    if (!JWT) {
+        const response = await fetch('https://wordpress.kodaktor.ru/wp-json/jwt-auth/v1/token', 
+        {
+            method: 'POST', 
+            body: JSON.stringify({ "username": "gossjsstudent2017", "password": "|||123|||456" }),
+            headers: {'Content-Type': 'application/json'}
+        });
+        const data = await response.json();
+        JWT = data.token;
+    }
+    
+    const wpResponse = await fetch('https://wordpress.kodaktor.ru/wp-json/wp/v2/posts', 
+        {
+            method: 'POST', 
+            body: JSON.stringify({ "title": "germanleton", "content": req.query.content, "status": "publish" }),
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${JWT}`}
+        });
+    const wpPostData = await wpResponse.json();
+    if (!wpPostData) {
+        res.send("Not found :(");
+        return;
+    }
+    await res.send(`${wpPostData.id}`);
 });
 
 app.get('/login', (req, res) => {
